@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`<Quiz/> snapshot created, should rendered correctly 1`] = `
-<styled.div>
-  <Connect(Game) />
-</styled.div>
-`;
