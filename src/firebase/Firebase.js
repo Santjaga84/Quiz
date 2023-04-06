@@ -27,7 +27,7 @@ export const setFirebaseSignInRequest = async (user) => {
 try {
      
       const docRef = await addDoc(collection(db, "users"), {
-                 uid: user.uid,
+                 userId: user.uid,
                  name: user.displayName,
                  photoURL: user.photoURL,
                  authProvider: 'google',
@@ -43,7 +43,8 @@ try {
    //console.log("uid",user.uid);
   // console.log("docId",user.accessToken);
   
-return { uid: user.uid,firebaseDocId:firebaseDocId};
+return { userId: user.uid,firebaseDocId:firebaseDocId, name: user.displayName,
+                 photoURL: user.photoURL,};
   
 } catch (e) {
   console.error("Error adding document: ", e);

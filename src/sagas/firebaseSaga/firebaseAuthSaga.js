@@ -17,14 +17,14 @@ import { deleteUserFromFirebase } from '../../firebase/Firebase';
 
 export function* signIn() {
 
-  const { uid, firebaseDocId } = yield call(signInGoogle);
+  const { userId, firebaseDocId } = yield call(signInGoogle);
   console.log("firebaseDocId",firebaseDocId);
   
   try {
 
-    yield put(setAuthUserStore({uid}));
+    yield put(setAuthUserStore({userId}));
     yield put(setAuthUserDatabaseIdStore({firebaseDocId}));
-    yield put(setDataToLocalStorage( { uid, firebaseDocId } ));
+    yield put(setDataToLocalStorage( { userId, firebaseDocId } ));
     
   } catch (error) {
     console.log('error', error);

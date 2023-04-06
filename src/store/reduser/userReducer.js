@@ -3,8 +3,11 @@ import { createSlice } from '@reduxjs/toolkit';
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-     uid: '',
+     userId: '',
      firebaseDocId:'',
+     name: '',
+     photoURL: '',
+     
      
   },
   reducers: {
@@ -18,7 +21,8 @@ const authSlice = createSlice({
     },
   
     setAuthUserStore: (state, action) => {
-    state.uid = action.payload.uid;
+      
+    state.userId = action.payload.userId;
     },
   
     
@@ -28,9 +32,13 @@ const authSlice = createSlice({
     },
 
     setDataToLocalStorage: (state, action) => {
-     
       state.data = action.payload;
     },
+    //  hydrateFromLocalStorage: (state, action) => {
+    //     const { userId, firebaseDocId } = action.payload;
+    //   state.user = userId;
+    //   state.firebaseDocId = firebaseDocId;
+    // }
     },
   
   
@@ -47,7 +55,7 @@ export const {
   userId,
   signInSuccess,
   signOutWithGoogle,
-  //setDocRef
+  hydrateFromLocalStorage
 } = authSlice.actions;
 
 export default authSlice.reducer;

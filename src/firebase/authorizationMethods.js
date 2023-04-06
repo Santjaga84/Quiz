@@ -14,9 +14,10 @@ const [user, setUser] = useState({});
 useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
- 
+//        localStorage.setItem('user', JSON.stringify(currentUser)); // сохраняем данные пользователя в localStorage
         setUser(currentUser);
       } else {
+  //      localStorage.removeItem('user'); 
         setUser(null);
       }
     });
@@ -43,12 +44,17 @@ export const signInGoogle = async () => {
   
   try {
     const provider = new GoogleAuthProvider();
-    const { user } = await signInWithPopup(auth, provider);
-     
+    const  signInData  = await signInWithPopup(auth, provider);
+       const {user} = signInData;
+       console.log(signInData);
     // записываем данные пользователя в Firestore
     const { firebaseDocId } = await setFirebaseSignInRequest(user);
-  
-    return { uid: user.uid, firebaseDocId:firebaseDocId};
+   
+   // localStorage.setItem('userId', user.uid);
+   // localStorage.setItem('firebaseDocId', firebaseDocId);
+   
+    return { userId: user.uid, firebaseDocId:firebaseDocId, name: user.displayName,
+                 photoURL: user.photoURL,};
   } catch (error) {
     console.error('Error signing in with Google: ', error);
     throw new Error(error);
@@ -56,8 +62,22 @@ export const signInGoogle = async () => {
   
 };
 
+export const checkUserSignInGoogle = async () =>{
+  try {
+  onAuthStateChanged(auth, (user) => {
+  if (user) {
+    const { firebaseDocId } =  setFirebaseSignInRequest(user);
   
-export const signOutGoogle = async(id) => {
+    return { userId: user.uid, firebaseDocId:firebaseDocId};
+  }})
+  } catch (error) {
+    console.error('Error signing in with Google: ', error);
+    throw new Error(error);
+  }
+}
+
+  
+export const signOutGoogle = async() => {
 
 signOut(auth)
 

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import colors from '../../../manager/themeManager/colors';
+import colors from './../../manager/themeManager/colors';
 
 export const TextFieldContainer = styled.div`
     height: 15%;
