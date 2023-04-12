@@ -2,12 +2,12 @@ import { combineReducers } from 'redux';
 import userReducer from './userReducer';
 
  import chatSlice from './chatReduser';
-// import quizReducer from './quizReducer';
+ import quizReduser from './quizReduser';
 
 const rootReducer = combineReducers({
     userState: userReducer,
     chatState: chatSlice,
-    // quizState: quizReducer,
+    quizState: quizReduser,
     
 });
 

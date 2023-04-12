@@ -5,7 +5,7 @@ import Chat from './components/chat/Chat';
 import { setDataToLocalStorage,setAuthUserDatabaseIdStore,setAuthUserStore } from '../../store/reduser/userReducer.js';
 import { useStore } from 'react-redux';
 import { useDispatch } from 'react-redux';
-
+import { setIsUserReadyToStartQuizStore } from '../../store/reduser/quizReduser.js';
 const Main = () => {
 
 const dispatch = useDispatch();
@@ -16,7 +16,9 @@ if (persistedUserData) {
     dispatch(setAuthUserStore({ userId }));
      const { firebaseDocId } = JSON.parse(persistedUserData);
     dispatch(setAuthUserDatabaseIdStore({ firebaseDocId }));
+    
   }
+  
   return (
     <QuizWrapper>
       <Quiz/>

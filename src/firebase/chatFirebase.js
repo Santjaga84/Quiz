@@ -9,6 +9,7 @@ try {
   const messagesRef = collection(db, 'messages');
   await addDoc(messagesRef,message);
     console.log("Document written with message: ", message);
+   
 
     
 } catch (e) {

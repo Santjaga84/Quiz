@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { collection,addDoc,doc,deleteDoc } from "firebase/firestore";
+import { collection,addDoc,doc,deleteDoc,setDoc } from "firebase/firestore";
 
 
 // Your web app's Firebase configuration
@@ -23,16 +23,17 @@ export const auth = getAuth(app);
 
 
 export const setFirebaseSignInRequest = async (user) => {
-  
+  const userId = auth.currentUser.uid;
+  console.log("user",userId);
 try {
-     
-      const docRef = await addDoc(collection(db, "users"), {
+     const docRef = doc(db, "users",userId)
+     await setDoc(docRef, {
                  userId: user.uid,
                  name: user.displayName,
                  photoURL: user.photoURL,
                  authProvider: 'google',
                  email: user.email,
-                 docId:user.accessToken,
+               //  docId:user.accessToken,
                 
                  
                  

@@ -6,12 +6,24 @@ import {
 } from './styledComponents';
 import CustomButton from './../../../../../../customComponents/customButton/CustomButton'
 import colors from './../../../../../../manager/themeManager/colors'
-
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsUserReadyToStartQuizStore } from '../../../../../../store/reduser/quizReduser';
 
 const ReadyForGame = ({
-    callback,
-    isUserReadyToStartQuiz,
+    
+    
 }) => {
+
+   const {isUserReadyToStartQuiz} = useSelector(state => state.quizState)
+    const dispatch = useDispatch();
+
+    const handleStart = () => {
+   
+    //вызываеться action из saga
+    dispatch(setIsUserReadyToStartQuizStore(!isUserReadyToStartQuiz));
+    
+  };
+
     return (
         <ReadyForGameWrapper>
             <ReadyText
@@ -24,7 +36,7 @@ const ReadyForGame = ({
             <ButtonWrapper>
                 <CustomButton
                     text={isUserReadyToStartQuiz ? 'CANCEL' : 'START'}
-                    callback={callback}
+                    callback={() => handleStart()}
                     isInversionTextColor={isUserReadyToStartQuiz}
                     backgroundColor={isUserReadyToStartQuiz && `${colors.brandBgColor}`}
                 />
