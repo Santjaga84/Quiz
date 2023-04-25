@@ -6,105 +6,124 @@ const quizSlise = createSlice({
 name: 'quiz',
 //isUserReadyToStartQuiz: false,
 initialState: {
-    answersList: [],
-    questionsList: [],
+    //answersList: [],
+    questionsList: {},
     isShowResults: false,
     questionsDocId: '',
-    currentQuestion: [],
-    usersResultsList: [],
+   // currentQuestion: [],
+    //usersResultsList: [],
     correctAnswersCount: 0,
+    answerResultCount:0,
     currentUserReadiness: {},
     isUserReadyToStartQuiz: false,
-    correctAnswersCountDocId: '',
+   // correctAnswersCountDocId: '',
+    isStartQuiz:false,
+    currentQuestionsList:{},
+    correctAnswerList:{},
+    //incorrectAnswerList:{},
+    isCorrectAnswer:'',
+    //newAnswerResultList: '',
+    isAnswerResultList:[],
+    results:{}
 },
 
 reducers: {
-  clearQuestionsStore:() => {
 
+  setIsUserReadyToStartQuizStore:(state,action) => { },
+
+  setCorrectAnswersCountStore:(state,action) => {
+    state.correctAnswersCount = action.payload
   },
 
-  setAnswerListStore:() => {
-
+  setAnswersListStore:(state,action) => {
+    state.isCorrectAnswer = action.payload
   },
 
-  setQuestionsListStore:() => {
-
-  },
-
-  clearUsersResultsStore:() => {
-
-  },
-
-  clearAnswersListStore:() => {
-
-  },
-  
-  setShowResultsStore:() => {
-
-  },
-  setQuestionsDocIdStore:() => {
-
+  setQuestionsDocIdStore:(state,action) => {
+    state.questionsDocId = action.payload
   }, 
   
-  setCurrentQuestionStore:() => {
+  setQuestionsListStore:(state,action) => {
+   state.questionsList = action.payload
+  },
 
+  setCurrentQuestionStore:(state,action) => {
+   state.currentQuestionsList = action.payload
 },
-  clearCurrentQuestionStore:() => {
-
-  },
-  setCorrectAnswerDocIdStore:() => {
-
-  }, 
-  setCorrectAnswersCountStore:() => {
-
-  },
-  setUserResultsResponseStore:() => {
-
-  },
+  
   setCurrentUserReadinessStore:(state,action) => {
    state.currentUserReadiness = action.payload
   },
-  clearCorrectAnswersCountStore:() => {
-
-  },
-  clearCurrentUserReadinessStore:() => {
-
-  },
-  setIsUserReadyToStartQuizStore:(state,action) => {
-
-  },
-  setQuizDataFromlocalStorageStore:() => {
-
-  },
+  
+ // setIsUserReadyToStartQuizStore:(state,action) => {},
 
   userReadyReadinessStore:(state,action) => {
     state.isUserReadyToStartQuiz = action.payload
-  }
+  },
+
+  userStartGameStore:(state,action) => {
+    state.isStartQuiz = action.payload
+  },
+
+  setStartQuiz:(state,action) => {
+    //
+  },
+
+  setQuestionStore:(state,action) => {
+    state.currentQuestionsList = action.payload
+  },
+
+  setCorrectAnswerStore:(state,action) => {
+   state.correctAnswerList = action.payload
+  }, 
+
+  setAnswersCountStore:(state,action) => {
+   state.answerResultCount = action.payload
+  },
+
+  setIsAnswerResultListStore:(state,action) => {
+      const newAnswer = {
+        isAnswerResultList: action.payload,
+        
+        
+      };
+      state.isAnswerResultList.push(newAnswer);
+   
+  },
+
+  sendQuestionsAnswersFromFirebase:(state,action) => {
+    console.log("Проверка");  
+  },
+
+  getResultQuestionFirebase:(state,action) => {
+    state.results = action.payload
+  },
+
+  setUpdateQuizResultsFirebase:(state,action) => {}
+
+
 }
 
 })
 
 export const {
-clearQuestionsStore,
-setAnswerListStore,
-setQuestionsListStore,
-clearUsersResultsStore,
-clearAnswersListStore,
-setShowResultsStore,
-setQuestionsDocIdStore,  
-setCurrentQuestionStore,
-clearCurrentQuestionStore,
-setCorrectAnswerDocIdStore, 
-setCorrectAnswersCountStore,
-setUserResultsResponseStore,
-setCurrentUserReadinessStore,
-clearCorrectAnswersCountStore,
-clearCurrentUserReadinessStore,
 setIsUserReadyToStartQuizStore,
-setQuizDataFromlocalStorageStore,
-userReadyReadinessStore
-
-
+setCorrectAnswersCountStore,
+setAnswersListStore,
+setQuestionsDocIdStore, 
+setQuestionsListStore,
+setCurrentQuestionStore,
+setCurrentUserReadinessStore,
+userReadyReadinessStore,
+userStartGameStore,
+setStartQuiz,
+setQuestionStore,
+setCorrectAnswerStore,
+setAnswersCountStore,
+setIsAnswerResultListStore,
+sendQuestionsAnswersFromFirebase,
+getResultQuestionFirebase,
+setUpdateQuizResultsFirebase
 
 } = quizSlise.actions
 

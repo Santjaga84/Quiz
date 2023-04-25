@@ -50,7 +50,7 @@ dispatch(signInWithGoogle());
                     callback={handleSignInWithGoogle}
                     borderColor={colors.loginButtonBorderColor}
                     isInversionTextColor
-                    
+                    //prompt="select_account"                     
                 >
                 </CustomButton>
             </ButtonContainer>

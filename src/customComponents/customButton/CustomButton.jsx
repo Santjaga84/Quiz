@@ -52,6 +52,7 @@ CustomButton.defaultProps = {
     borderColor: '#56bab7',
     isInversionTextColor: false,
     activeBackgroundColor: '#56bab7',
+    
 }
 
 export default CustomButton;

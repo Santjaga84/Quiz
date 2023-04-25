@@ -14,10 +14,10 @@ const [user, setUser] = useState({});
 useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-//        localStorage.setItem('user', JSON.stringify(currentUser)); // сохраняем данные пользователя в localStorage
+
         setUser(currentUser);
       } else {
-  //      localStorage.removeItem('user'); 
+  
         setUser(null);
       }
     });

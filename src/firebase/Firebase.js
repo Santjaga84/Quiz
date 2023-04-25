@@ -36,7 +36,6 @@ try {
                //  docId:user.accessToken,
                 
                  
-                 
   });
    const firebaseDocId = docRef.id
    console.log("Document written with ID: ", docRef.id);
@@ -67,5 +66,7 @@ export const deleteUserFromFirebase = async (firebaseDocId) => {
   }catch(e){
      console.error("Error adding document: ", e);
   }
+
+  
 }
 

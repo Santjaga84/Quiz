@@ -1,7 +1,7 @@
 // import Component from './Game';
 // import { connect } from 'react-redux';
 // import * as actions from '../../../../actions';
-// import * as selectors from '../../../../selectors';
+ //import * as selectors from '../../../../selectors';
 
 // const mapStateToProps = state => ({
 //     text: selectors.textSelector(state),

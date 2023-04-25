@@ -17,4 +17,5 @@ export const ReadyText = styled.span`
 export const ButtonWrapper = styled.span`
   width: 170px;
   height: 30px;
+  margin: 10px 0;
 `;

@@ -13,7 +13,7 @@ export const CustomButtonWrapper = styled.div`
     border-radius: 3px;
     cursor: pointer;
     background: ${props => (props.backgroundColor ? props.backgroundColor : 'transparent')};
-    
+    padding: 10px
     &:active {
         background: ${props => (props.activeBackgroundColor ? props.activeBackgroundColor : `${colors.brandBgColor}`)};
       

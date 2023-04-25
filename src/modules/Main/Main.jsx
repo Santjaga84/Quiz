@@ -2,10 +2,10 @@ import React from 'react'
 import { QuizWrapper } from './styledComponents.js';
 import Quiz from './components/quiz/Quiz';
 import Chat from './components/chat/Chat';
-import { setDataToLocalStorage,setAuthUserDatabaseIdStore,setAuthUserStore } from '../../store/reduser/userReducer.js';
-import { useStore } from 'react-redux';
+import { setAuthUserDatabaseIdStore,setAuthUserStore } from '../../store/reduser/userReducer.js';
 import { useDispatch } from 'react-redux';
-import { setIsUserReadyToStartQuizStore } from '../../store/reduser/quizReduser.js';
+
+
 const Main = () => {
 
 const dispatch = useDispatch();
@@ -21,7 +21,7 @@ if (persistedUserData) {
   
   return (
     <QuizWrapper>
-      <Quiz/>
+      <Quiz/> 
       <Chat/>
     </QuizWrapper>
   )

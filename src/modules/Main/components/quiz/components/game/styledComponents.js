@@ -43,6 +43,7 @@ export const AnswerResultImages = styled.div`
 export const QuestionText = styled.span`
   color: ${colors.lightTextColor};;
   user-select: none;
+  font-size: 1vw;
 `;
 
 export const AnswerButtons = styled.div`
