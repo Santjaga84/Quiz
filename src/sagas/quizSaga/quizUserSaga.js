@@ -1,4 +1,4 @@
-import { all,put,takeEvery,call,select,take,fork,delay } from "redux-saga/effects";
+import { all,put,takeEvery,call,select,take,fork } from "redux-saga/effects";
 import { sendGetRequest } from "../../API/sendGetRequest";
 import { questionsUrl } from "../../API/constants";    
 import * as eventChannels from '../eventChannels/eventChannels';
@@ -7,9 +7,10 @@ import { addQuizUsersFirebase,
          checkIsUsersReadyToStartQuiz,
          sendAddQuestionsRequest,
          deleteQuestionsFromFirebase,
-         //sendQuizQuestionsAnswersFirebase,
          updateQuizAnswersFirebase,
-         updateQuizResultsFirebase
+         updateQuizResultsFirebase,
+         setQuizQuestionsFirebase,
+         
 } from "../../firebase/quizFirebase";
 
 import { userReadyReadinessStore,
@@ -17,16 +18,12 @@ import { userReadyReadinessStore,
          setQuestionsDocIdStore,
          setIsUserReadyToStartQuizStore,
          userStartGameStore,
-         setCurrentQuestionStore,
          setStartQuiz,
          setQuestionStore,
          setCorrectAnswerStore,
-         setIncorrectAnswerStore,
-         sendQuestionsAnswersFromFirebase,
          setUpdateQuizResultsFirebase
          
         } from "../../store/reduser/quizReduser";
-//import { delay } from "redux-saga/effects";
         
 
 export function* setIsReadyForGameRequest(action) {
@@ -38,11 +35,9 @@ export function* setIsReadyForGameRequest(action) {
         if (isUserReadyForGame) {
 
             yield call(checkIsUsersReadyToStartQuiz) 
-             
-
+            
             const { userIdQuiz, docQuizFairbase } = yield call(addQuizUsersFirebase);
             yield put(setCurrentUserReadinessStore({userIdQuiz,docQuizFairbase}));
-            console.log('userQuery',docQuizFairbase); 
             yield put(userReadyReadinessStore(true));
             localStorage.setItem('quizData', JSON.stringify({
         data: {
@@ -52,9 +47,7 @@ export function* setIsReadyForGameRequest(action) {
         yield call(initializeBeforeStartQuiz)
 
         const isStartQuiz = yield call(checkIsUsersReadyToStartQuiz);
-            console.log("isUsersReadyToStartQuiz",isStartQuiz);
-        //isUserReadyForGame && (yield call(initializeBeforeStartQuiz));
-
+                
         yield put(userStartGameStore(isStartQuiz))
 
        return;
@@ -71,10 +64,8 @@ export function* setIsReadyForGameRequest(action) {
 
 export function* initializeBeforeStartQuiz() {
     try {
-        //const { userIdQuiz, userReadinessDocId } = yield call(addQuizUsersFirebase);
         const data = yield call(sendGetRequest, questionsUrl)
-        
-        //весь массив данных
+                
         const {results:questions}  = data;
                    
     const questionsDocId = yield call(sendAddQuestionsRequest, questions);
@@ -91,7 +82,7 @@ export function* clearAllCurrentUserReadinessData() {
     const docQuizFairbase = yield select(state => state.quizState.currentUserReadiness.docQuizFairbase);
     const questionsDocId = yield select(state => state.quizState.questionsDocId)
     yield call(deleteFromCollectionByDocIdRequest,docQuizFairbase)
-    yield call(deleteQuestionsFromFirebase,questionsDocId) 
+    yield call(deleteQuestionsFromFirebase,questionsDocId)
     yield put(userReadyReadinessStore(false));
     localStorage.setItem('quizData', JSON.stringify({
         data: {
@@ -103,19 +94,26 @@ export function* clearAllCurrentUserReadinessData() {
 }
 
 
-export function* startListener() {  //генераторная функция, которая прослушивает новые сообщения в чате, используя канал событий chatMessagesEventChannel, определенный в ../eventChannels/eventChannels.js. Она входит в бесконечный цикл, используя оператор while (true) и ожидает новых сообщений, поступающих на канал событий, используя эффект take. Когда новое сообщение приходит, она отправляет связанное с ним действие.
+export function* startListenerQuestions() {  //генераторная функция, которая прослушивает новые сообщения в чате, используя канал событий chatMessagesEventChannel, определенный в ../eventChannels/eventChannels.js. Она входит в бесконечный цикл, используя оператор while (true) и ожидает новых сообщений, поступающих на канал событий, используя эффект take. Когда новое сообщение приходит, она отправляет связанное с ним действие.
     const questionsChannel = eventChannels.questionsEventChannel();
-    const resultChannel = eventChannels.usersResultsEventChannel();
-
+   
     while (true) {
         const eventQuestionAction = yield take(questionsChannel);
         yield put(eventQuestionAction);
 
-        const eventResultsAction = yield take(resultChannel)
-        yield put(eventResultsAction)
     }
 }
 
+export function* startListenerResults() {
+const resultChannel = eventChannels.usersResultsEventChannel();
+
+    while (true) {
+        
+        const eventResultsAction = yield take(resultChannel)
+        yield put(eventResultsAction)
+       
+    }
+}
 
 
 export function* startQuiz() {
@@ -123,7 +121,6 @@ export function* startQuiz() {
     const questions = yield select(state => state.quizState.questionsList);
   
     const docQuizFairbase = yield select(state => state.quizState.currentUserReadiness.docQuizFairbase);
-    console.log("docQuizFairbase",docQuizFairbase);
     const formattedQuestions = questions.map((questionObj) => {
     const answers = [...questionObj.incorrect_answers, questionObj.correct_answer];
     return {
@@ -140,24 +137,22 @@ yield call(updateQuizAnswersFirebase,docQuizFairbase)
 }
 
 
-export function* sendCountAnswersFromFirebase(action){
+export function* setCountAnswersFromFirebase(action){
 
-    const answerResultsCount = yield select(state => state.quizState.answerResultCount)
-    //const answerResultCount = action.payload
-    const correctAnswersCount = action.payload
-
-    //console.log("answers",answerResultCount);
-    console.log("correctAnswersCount",correctAnswersCount,answerResultsCount);
-    yield call(updateQuizResultsFirebase,correctAnswersCount,answerResultsCount)
+    const {answerResultCount,correctAnswersCount } = action.payload
+          
+    yield call(updateQuizResultsFirebase,correctAnswersCount,answerResultCount)
+    yield call(setQuizQuestionsFirebase,answerResultCount)
 } 
 
 
 
 export default function* watchQuizUserSaga() {
     yield all([
-        fork(startListener),
+        fork(startListenerQuestions),
+        fork(startListenerResults),
         takeEvery(setIsUserReadyToStartQuizStore.type, setIsReadyForGameRequest),
         takeEvery(setStartQuiz.type, startQuiz),     
-        takeEvery(setUpdateQuizResultsFirebase.type, sendCountAnswersFromFirebase)
+        takeEvery(setUpdateQuizResultsFirebase.type, setCountAnswersFromFirebase)
     ]);
 };

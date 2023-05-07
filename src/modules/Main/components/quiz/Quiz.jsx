@@ -1,7 +1,7 @@
 import React from 'react';
 import { QuizWrapper } from './styledComponents';
-import Game from './components/game';
-import Results from './components/results';
+import Game from './components/game/Game';
+import Results from './components/results/Results';
 import ReadyForGame from './components/readyForGame/ReadyForGame';
 
 const Quiz = ({

@@ -4,27 +4,25 @@ import { createSlice } from "@reduxjs/toolkit";
 const quizSlise = createSlice({
 
 name: 'quiz',
-//isUserReadyToStartQuiz: false,
+
 initialState: {
-    //answersList: [],
     questionsList: {},
     isShowResults: false,
     questionsDocId: '',
-   // currentQuestion: [],
-    //usersResultsList: [],
     correctAnswersCount: 0,
     answerResultCount:0,
     currentUserReadiness: {},
     isUserReadyToStartQuiz: false,
-   // correctAnswersCountDocId: '',
     isStartQuiz:false,
     currentQuestionsList:{},
     correctAnswerList:{},
-    //incorrectAnswerList:{},
     isCorrectAnswer:'',
-    //newAnswerResultList: '',
     isAnswerResultList:[],
-    results:{}
+    results:[],
+    isFinishQuiz: false,
+    isStartGame: false,
+    countQuestionStore:0,
+    
 },
 
 reducers: {
@@ -55,8 +53,6 @@ reducers: {
    state.currentUserReadiness = action.payload
   },
   
- // setIsUserReadyToStartQuizStore:(state,action) => {},
-
   userReadyReadinessStore:(state,action) => {
     state.isUserReadyToStartQuiz = action.payload
   },
@@ -81,28 +77,48 @@ reducers: {
    state.answerResultCount = action.payload
   },
 
+  setCountQuestionStore:(state,action) => {
+   state.countQuestionStore = action.payload
+  },
+
   setIsAnswerResultListStore:(state,action) => {
-      const newAnswer = {
-        isAnswerResultList: action.payload,
-        
-        
-      };
-      state.isAnswerResultList.push(newAnswer);
+    const newAnswer = {
+    isAnswerResultList: action.payload,
+    }; 
    
+    state.isAnswerResultList.push(newAnswer);  
+    
+    if (state.isAnswerResultList.length === 10) {
+      state.isAnswerResultList = [];
+    }
   },
 
   sendQuestionsAnswersFromFirebase:(state,action) => {
-    console.log("Проверка");  
+    
   },
 
-  getResultQuestionFirebase:(state,action) => {
-    state.results = action.payload
+  setResultQuestionFirebase:(state,action) => {
+     
+    state.results = action.payload;
   },
 
-  setUpdateQuizResultsFirebase:(state,action) => {}
+  setUpdateQuizResultsFirebase:(state,action) => {
+    
+  },
 
+  setShowResults(state, action) {
+    state.isShowResults = action.payload;
+  },
 
-}
+  setIsFinishQuiz:(state,action) => {
+    state.isFinishQuiz = action.payload
+  },
+
+  setIsStartGame:(state,action) => {
+    state.isStartGame = action.payload
+  },
+
+ }
 
 })
 
@@ -122,9 +138,12 @@ setCorrectAnswerStore,
 setAnswersCountStore,
 setIsAnswerResultListStore,
 sendQuestionsAnswersFromFirebase,
-getResultQuestionFirebase,
-setUpdateQuizResultsFirebase
-
+setResultQuestionFirebase,
+setUpdateQuizResultsFirebase,
+setShowResults,
+setIsFinishQuiz,
+setIsStartGames,
+setCountQuestionStore,
 } = quizSlise.actions
 
 export default quizSlise.reducer;

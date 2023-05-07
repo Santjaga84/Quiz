@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { db,auth } from "./Firebase";
-import { addDoc,collection, setDoc, query ,where, getDocs,doc, deleteDoc, updateDoc, arrayUnion} from "firebase/firestore"; 
+import { addDoc,collection, setDoc, getDocs,doc, deleteDoc, updateDoc} from "firebase/firestore"; 
 
 
 export const addQuizUsersFirebase = async () => {
@@ -9,36 +8,25 @@ export const addQuizUsersFirebase = async () => {
     const userIdQuiz = user.uid;
   
 try {
-        const docRefQuiz = collection(db,'quizResult');
+      
+    const docRefQuiz = doc(db,'quizResult',userIdQuiz);
         
-         const query = await getDocs(docRefQuiz);
-         if (query.size === 0) {
-         const docRefQuizFairbase = await addDoc(docRefQuiz,{
-          
+        await setDoc(docRefQuiz,{
+                    currentQuestion:0,
                     users:
                       {
-                      //   {
-                      //   uid: user.uid,
-                      //   displayName: user.displayName,
-                      //   photoURL: user.photoURL,
-                      //   points:0
-                      // },
-                      status:'pending',
-                         },
-                       
-                        currentQustion: 0,
-                       
-                    })
-        const docQuizFairbase = docRefQuizFairbase.id                  
-        
-        return { userIdQuiz: userIdQuiz, docQuizFairbase: docQuizFairbase };
-        }
-      const querySnapshot = await getDocs(collection(db, "quizResult"));
-         querySnapshot.forEach((doc) => {
-        
-    });
-        const docQuizFairbase = doc.id;          
-         return { userIdQuiz: userIdQuiz, docQuizFairbase: docQuizFairbase };  
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL,
+                        points:0,
+                        status:'pending',
+                        isStartGame:true
+                       },
+                      }  
+                    )
+  
+      return { userIdQuiz: userIdQuiz, docQuizFairbase: userReadinessDocId };
+     
       } catch (e) {
   console.error("Error adding document: ", e);
   throw new Error(e);
@@ -55,7 +43,7 @@ export const checkIsUsersReadyToStartQuiz = async () => {
          const userQuery = await getDocs(firebaseUsersRef);
          const userReadinessQuery = await getDocs(firebaseUsersReadinessRef);
 
-         return ( userReadinessQuery.size > 0);
+         return ( userReadinessQuery.size >= 2);
         
      } catch (error) {
          console.error('error', error);
@@ -64,15 +52,12 @@ export const checkIsUsersReadyToStartQuiz = async () => {
 };
 
 
-export const deleteFromCollectionByDocIdRequest = async ( docQuizFairbase ) => {
+export const deleteFromCollectionByDocIdRequest = async () => {
+const user = auth.currentUser;
+const userIdQuiz = user.uid;
 
-const querySnapshot = await getDocs(collection(db, "quizResult"));
-querySnapshot.forEach((doc) => {
-  
-  docQuizFairbase = doc.id
-});
    try{
-   await deleteDoc(doc(db, 'quizResult', docQuizFairbase));
+   await deleteDoc(doc(db, 'quizResult', userIdQuiz));
   }catch(e){
      console.error("Error adding document: ", e);
   }
@@ -123,80 +108,72 @@ export const sendAddQuestionsRequest = async (questions) => {
  };
 
 
- export const updateQuizAnswersFirebase = async (docQuizFairbase) => {
+ export const updateQuizAnswersFirebase = async () => {
   
   const user = auth.currentUser;
-    
-  const querySnapshot = await getDocs(collection(db, "quizResult"));
-  querySnapshot.forEach((doc) => {
-  
-  
-  docQuizFairbase = doc.id
-});
-  
+  const userIdQuiz = user.uid;  
+
   try {
-        const docQuiz = doc(db,'quizResult',docQuizFairbase);
+        const docQuiz = doc(db,'quizResult',userIdQuiz);
         await updateDoc(docQuiz,{
-                        //quizId:docRefFire.id,
-                        users:arrayUnion(
-                          {
+                       
+                        "users.status":'active', 
+                      
+                    });
+
+        } catch (e) {
+  console.error("Error adding document: ", e);
+  throw new Error(e);
+ }
+ }
+
+
+ export const updateQuizResultsFirebase = async (correctAnswersCount,answerResultCount) => {
+      
+  const user = auth.currentUser;
+  const userIdQuiz = user.uid;  
+    
+  try {
+      const docQuiz = doc(db,'quizResult',userIdQuiz);
+      
+      const data = {
+                    currentQuestion:answerResultCount,
+                    
+                    users:
+                      {
                         uid: user.uid,
                         displayName: user.displayName,
                         photoURL: user.photoURL,
-                        points:0, 
-                        status:'active', 
-                      }),
-                       
-                       //currentQustion:0,
-                    });
-//         console.log(docRefFire.id);       
-  //       return {  uid: user.uid, isUserReadyToStartQuiz:isUserReadyToStartQuiz };
-        } catch (e) {
-  console.error("Error adding document: ", e);
-  throw new Error(e);
- }
- }
-
- export const updateQuizResultsFirebase = async (correctAnswersCount,answerResultsCount,docQuizFairbase) => {
-      
-  const user = auth.currentUser;
-
-  const querySnapshot = await getDocs(collection(db, "quizResult"));
-  querySnapshot.forEach((doc) => {
-  
-  docQuizFairbase = doc.id
-});
-
-console.log("correctAnswersCount",correctAnswersCount);
-
-  
-  try {
-        const docQuiz = doc(db,'quizResult',docQuizFairbase);
-        
-        const data = {
-          currentQustion: answerResultsCount,
-
-          users:{
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            status:'active',
-            correctAnswersCount: correctAnswersCount,
-          }
-          }
+                        points:correctAnswersCount,
+                        status:'pending',
+                        isStartGame:true
+                         }
+         
+        }
           
-
         await updateDoc(docQuiz,data)
-         // {
-                      
-                     //  "status":'active',
-                   //    "currentQustion": answerResultCount,
-   //                    "users.points": 4,
-                 //     });
-//         console.log(docRefFire.id);       
-  //       return {  uid: user.uid, isUserReadyToStartQuiz:isUserReadyToStartQuiz };
+       
         } catch (e) {
   console.error("Error adding document: ", e);
   throw new Error(e);
  }
  }
+
+ export const setQuizQuestionsFirebase = async (answerResultCount) => {
+        
+  let questionsDocId = ''
+        const fireBaseRef = collection(db,'questionsQuiz');
+        const query = await getDocs(fireBaseRef);
+         query.forEach((doc) => {
+         questionsDocId = doc.id;
+        });
+  const data = {
+                  currentQuestion:answerResultCount,
+                  questionsDocId:questionsDocId
+                }      
+       
+        const updateFireBase = doc(db,'questionsQuiz',questionsDocId);
+        await updateDoc(updateFireBase,data)         
+       
+}
+
